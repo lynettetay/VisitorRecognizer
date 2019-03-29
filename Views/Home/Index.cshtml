@@ -1,0 +1,358 @@
+﻿@using VisitorRecognizer.Models
+@model VisitorRecognizer.Models.Visitor
+@{
+    Layout = "~/Views/Shared/_Layout.Mobile.cshtml";
+}
+<style type="text/css">
+    @@font-face {
+        font-family: 'MYFORQUE';
+        src: url('fonts/FORQUE.eot'); /* IE9 Compat Modes */
+        src: url('fonts/FORQUE.TTF') format('truetype'), /* Safari, Android, iOS */
+        url('fonts/FORQUE.woff') format('woff');
+    }
+
+    #example {
+        text-align: left;
+        font-size: 15px;
+    }
+
+    #btntable, #comment {
+        border: none;
+        text-align: center;
+        font-family: Tahoma;
+        color: #678797;
+    }
+
+    input[type="text"] {
+        text-align: left;
+    }
+
+    #comment {
+        color: red;
+    }
+
+    #test {
+        font-family: Tahoma;
+        position: absolute;
+        margin-left: 10px;
+        margin-top: 40px;
+        width: 320px;
+        height: 400px;
+        padding-top: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
+        top: 15px;
+        left: 0px;
+        background-image: linear-gradient(to right, #0f87ab, #0f87ab, #57abc4, #57abc4);
+        border-radius: 8px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        text-align: left;
+        color: #d4d6d7;
+    }
+
+    #header {
+        font-family: Tahoma;
+        color: #678797;
+        text-align: center;
+        font-size: larger;
+        color: #d4d6d7;
+    }
+
+    #refresh, #update, #txtcarplate {
+        border-radius: 5px;
+        text-align: center;
+        font-family: Tahoma;
+        color: #678797;
+        font-size: 15px;
+    }
+
+    #txtcarplate, #txtname, #txtcontact, #txtunit, #txtblock, #txtpVisit, #txtreason {
+        text-align: center;
+        font-family: Tahoma;
+        color: #3b3d3e;
+        font-size: 15px;
+    }
+    /* Style buttons */
+    .btn {
+        background-color: DodgerBlue; /* Blue background */
+        border: none; /* Remove borders */
+        color: white; /* White text */
+        padding: 12px 16px; /* /*Some padding */
+        font-size: 18px; /* Set a font size */
+        cursor: pointer; /* Mouse pointer on hover */
+    }
+
+        /* Darker background on mouse-over */
+        .btn:hover {
+            background-color: RoyalBlue;
+        }
+</style>
+<div id="test">
+    <div>
+        <table id="example" class="display table table-bordered" cellspacing="0" width="100%">
+            <tbody>
+                <p id="header"><strong> Visitor Management System</strong></p>
+                <tr height="22px">
+                    <td width="30%;"><strong>Car Plate</strong></td>
+                    <td id="txtcarplate" width="60%;" style="font-weight:bold"></td>
+                    <td id="btncol" width="10%;" style="display: none;">
+                        <input id="btncancel" type="image" src="~/images/cancel.png" title="Wrong Plate" alt="Submit" width="16" height="16" style="text-align:left"></input>
+                    </td>
+                </tr>
+                <tr style="padding-top:20px;">
+                    <td width="30%;"><strong>Reason</strong></td>
+                    <td width="60%;"><textarea id="txtreason" type="text" readonly="readonly" style="width:99%;"></textarea></td>
+                    <td width="10%;"></td>
+                </tr>
+                <tr style="padding-top:20em;">
+                    <td width="30%;"><strong>Name</strong></td>
+                    <td width="60%;"><input id="txtname" type="text" readonly="readonly" style="width:100%;"></td>
+                    <td width="10%;"></td>
+                </tr>
+                <tr style="padding-top:20em;">
+                    <td width="30%;"><strong>Contact</strong></td>
+                    <td width="60%;"><input id="txtcontact" type="text" readonly="readonly" style="width:100%;"></td>
+                    <td width="10%;"></td>
+                </tr>
+                <tr style="padding-top:20em;">
+                    <td width="30%;"><strong>Block</strong></td>
+                    <td width="60%;"><input id="txtblock" type="text" readonly="readonly" style="width:100%;"></td>
+                    <td width="10%;"></td>
+                </tr>
+                <tr style="padding-top:20em;">
+                    <td width="30%;"><strong>Unit</strong></td>
+                    <td width="60%;"><input id="txtunit" type="text" readonly="readonly" style="width:100%;"></td>
+                    <td width="10%;"></td>
+                </tr>
+                <tr style="padding-top:20em;">
+                    <td width="30%;"><strong>Pre. Visit</strong></td>
+                    <td width="60%;"><input id="txtpVisit" type="text" readonly="readonly" style="width:100%;"></td>
+                    <td width="10%;"></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div></div>
+    <div style="width:100%; margin: 0 auto; text-align:left;">
+        <table id="comment" cellspacing="0" width="100%" ; height="110px">
+            <tbody>
+                <tr>
+                    <td id="comment"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div></div>
+    <div style="width:50%; margin: 0 auto; text-align:left;">
+        <table id="btntable" cellspacing="0" width="100%" ;>
+            <tbody>
+                <tr>
+                    <td width="50%;"><button id="refresh">Refresh</button></td>
+                    <td width="25%;"><button id="update">Update</button></td>
+                    
+                </tr>       
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#refresh").click(function (e) {
+            $.ajax({
+               // url: "/Home/readFile",
+                type: "POST",
+                url: '@Url.Action("readFile", "Home")',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (result, status, xhr) {
+                    var obj = $.parseJSON(result);
+                    $('#txtcarplate').html(obj.carplate);
+                    $('#txtname').val(obj.name);
+                    $('#txtcontact').val(obj.contact);
+                    $('#txtblock').val(obj.block);
+                    $('#txtunit').val(obj.unit);
+                    $('#txtpVisit').val(obj.pVisit);
+                    $('#txtreason').val(obj.reason);
+                    $("#txtname").attr("readonly", false);
+                    $("#txtcontact").attr("readonly", false);
+                    $("#txtunit").attr("readonly", false);
+                    $("#txtblock").attr("readonly", false);
+                    $("#txtreason").attr("readonly", false);
+
+                    if ($("#txtcarplate").html()) {
+                        $('#comment').html("")
+                        $("#btncol").css("display", "");
+                    }
+                    else {
+                        $('#comment').html("*No car plate was detected.")
+                        $("#btncol").css("display", "none");
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    alert("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText);
+                }
+            });
+            return false;
+        });
+    });
+  
+    $(document).ready(function () {
+        $("#update").click(function (e) {
+            var carplate = $('#txtcarplate').html();
+            var name = $('#txtname').val();
+            var contact = $('#txtcontact').val();
+            var block = $('#txtblock').val();
+            var unit = $('#txtunit').val();
+            var pVisit ="";
+            var reason = $('#txtreason').val();
+            var validation = true;
+            var comments = "";
+            if (carplate) {
+                if (name == false) {
+                    comments = "*Please enter visitor's name.";
+                    validation = false;
+                }
+                if (contact == false) {
+                    if (comments == "") {
+                        comments = comments + "*Please enter visitor's contact number.";
+                    } else {
+                        comments = comments + "<br />*Please enter visitor's contact number.";
+                    }
+                    validation = false;
+                }
+                if (block == false) {
+                    if (comments == "") {
+                        comments = comments + "*Please enter visitor's block.";
+                    } else {
+                        comments = comments + "<br />*Please enter visitor's block.";
+                    }
+                    validation = false;
+                }
+                if (unit == false) {
+                    if (comments == "") {
+                        comments = comments + "*Please enter visitor's unit.";
+                    } else {
+                        comments = comments + "<br />*Please enter visitor's unit.";
+                    }
+                    validation = false;
+                }
+                if (reason == false) {
+                    if (comments == "") {
+                        comments = comments + "*Please enter reason of visit.";
+                    } else {
+                        comments = comments + "<br />*Please enter reason of visit.";
+                    }
+                    validation = false;
+                }
+                if (validation == true) {
+                    if ($("#txtcarplate").html()) {
+                        $('#comment').html("")
+                        $("#btncol").css("display", "");
+                    }
+                    else {
+                        $('#comment').html("*No car plate was detected.")
+                        $("#btncol").css("display", "none");
+                    }
+                    $.ajax({
+                        url: '@Url.Action("updateFile", "Home")',
+                        data: JSON.stringify({ 'carplate': carplate, 'name': name, 'contact': contact, 'block': block,'unit': unit, 'pVisit': pVisit ,'reason': reason }),
+                        dataType: "html",
+                        contentType: 'application/json',
+                        type: "post",
+                        cache: false,
+                        success: function (savingStatus) {
+                            $('#comment').html("Visitor " + carplate + " has update successfully.");
+                            $("#txtname").attr("readonly", true);
+                            $("#txtcontact").attr("readonly", true);
+                            $("#txtblock").attr("readonly", true);
+                            $("#txtunit").attr("readonly", true);
+                            $("#txtreason").attr("readonly", true);
+                        },
+                        error: function (xhr, status, error) {
+                            alert("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText);
+                        }
+                    });
+                }
+                else {
+                    $('#comment').html(comments)
+                }
+            }
+            else {
+                comments = " *No car plate was detected.";
+                $('#comment').html(comments)
+                $("#btncol").css("display", "none");
+            }
+            return false;
+        });
+    });
+
+      $(document).ready(function () {
+          $("#btncancel").click(function (e) {
+              var carplate = $("#txtcarplate").html();
+
+            $.ajax({
+                url: '@Url.Action("cancelFile", "Home")',
+                data: JSON.stringify({ 'carplate': carplate, 'name': "", 'contact': "", 'unit': "", 'pVisit': "" ,'reason': "" }),
+                dataType: "html",
+                contentType: 'application/json',
+                type: "post",
+                cache: false,
+                beforeSend: function () {
+                    return confirm("Are you sure to skip this  " + carplate + " ?");
+                },
+                success: function (savingStatus) {
+                    $("#txtname").attr("readonly", true);
+                    $("#txtcontact").attr("readonly", true);
+                    $("#txtblock").attr("readonly", true);
+                    $("#txtunit").attr("readonly", true);
+                    $("#txtreason").attr("readonly", true);
+                    $('#comment').html("Visitor " + carplate + " has deleted.");
+                    $("#btncol").css("display", "none");
+
+                      $.ajax({
+               // url: "/Home/readFile",
+                type: "POST",
+                url: '@Url.Action("readFile", "Home")',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (result, status, xhr) {
+                    var obj = $.parseJSON(result);
+                    $('#txtcarplate').html(obj.carplate);
+                    $('#txtname').val(obj.name);
+                    $('#txtcontact').val(obj.contact);
+                    $('#txtblock').val(obj.block);
+                    $('#txtunit').val(obj.unit);
+                    $('#txtpVisit').val(obj.pVisit);
+                    $('#txtreason').val(obj.reason);
+                    $("#txtname").attr("readonly", false);
+                    $("#txtcontact").attr("readonly", false);
+                    $("#txtblock").attr("readonly", false);
+                    $("#txtreason").attr("readonly", false);
+
+                    if ($("#txtcarplate").html()) {
+                        $('#comment').html("")
+                        $("#btncol").css("display", "");
+                    }
+                    else {
+                        $('#comment').html("*No car plate was detected.")
+                        $("#btncol").css("display", "none");
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    alert("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText);
+                }
+            });
+                },
+                error: function (xhr, status, error) {
+                    alert("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText);
+                }
+            });
+            return false;
+        });
+    });
+</script>
